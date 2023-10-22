@@ -1,37 +1,41 @@
-pipeline {
+pipeline{
     agent any
-    tools{
-        maven 'maven_3_5_0'
-    }
     stages{
-        stage('Build Maven'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
-                sh 'mvn clean install'
-            }
-        }
-        stage('Build docker image'){
+        stage('Git Checkout'){
             steps{
                 script{
-                    sh 'docker build -t javatechie/devops-integration .'
-                }
-            }
+                    git branch: 'main', url: 'https://github.com/V-vk-404/devops-automation.git'
+                   }  
+              }
         }
-        stage('Push image to Hub'){
+        stage('Maven Build '){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u javatechie -p ${dockerhubpwd}'
-
-}
-                   sh 'docker push javatechie/devops-integration'
-                }
-            }
+                    sh 'mvn clean install'
+                   }  
+              }
         }
-        stage('Deploy to k8s'){
+        stage('Docker Build Image'){
             steps{
                 script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+                    sh 'sudo docker build -t jarvis99/devops-integration .'
+                   }  
+              }
+        }
+        stage('Docker Push image'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'docker-passwords', variable: 'docker_password')]) {
+                       sh ' sudo  docker login -u jarvis99 -p $docker_password'
+                    }
+                       sh ' sudo docker push jarvis99/devops-integration'
+                   }  
+              }
+        }
+        stage('Create Docker Container'){
+            steps{
+                script{
+                    sh 'sudo docker run -dit --name maven-project -p 80:8080 jarvis99/devops-integration' 
                 }
             }
         }
