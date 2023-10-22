@@ -11,7 +11,7 @@ public class DevopsIntegrationApplication {
 
 	@GetMapping
 	public String message(){
-		return "welcome to javatechie";
+		return "<h1> Welcome To MavenProject </h1>";
 	}
 
 	public static void main(String[] args) {
