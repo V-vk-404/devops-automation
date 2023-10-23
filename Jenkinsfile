@@ -15,14 +15,30 @@ pipeline{
                    }  
               }
         }
-        stage('Docker Build Image'){
+        stage('SonarQube Analysis'){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'sonar-token') {
+                          sh 'mvn sonar:sonar'
+                       }
+                   }  
+              }
+        }
+        stage('SonarQube Qulity Gate'){
+            steps{
+                script{
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                   }  
+              }
+        }
+         stage('Docker Build Image'){
             steps{
                 script{
                     sh 'sudo docker build -t jarvis99/devops-integration .'
                    }  
               }
         }
-        stage('Docker Push image'){
+        stage('Docker Push Image'){
             steps{
                 script{
                     withCredentials([string(credentialsId: 'docker-passwords', variable: 'docker_password')]) {
