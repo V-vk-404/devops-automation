@@ -15,14 +15,14 @@ pipeline{
                    }  
               }
         }
-        stage('Docker Build Image'){
+        stage('Build Docker Image'){
             steps{
                 script{
                     sh 'sudo docker build -t jarvis99/devops-integration .'
                    }  
               }
         }
-        stage('Docker Push Image'){
+        stage('Push Docker Image'){
             steps{
                 script{
                     withCredentials([string(credentialsId: 'docker-passwords', variable: 'docker_password')]) {
