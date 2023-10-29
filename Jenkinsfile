@@ -15,23 +15,7 @@ pipeline{
                    }  
               }
         }
-        stage('SonarQube Analysis'){
-            steps{
-                script{
-                    withSonarQubeEnv(credentialsId: 'sonar-token') {
-                          sh 'mvn sonar:sonar'
-                       }
-                   }  
-              }
-        }
-        stage('SonarQube Qulity Gate'){
-            steps{
-                script{
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-                   }  
-              }
-        }
-         stage('Docker Build Image'){
+        stage('Docker Build Image'){
             steps{
                 script{
                     sh 'sudo docker build -t jarvis99/devops-integration .'
@@ -48,10 +32,10 @@ pipeline{
                    }  
               }
         }
-        stage('Create Docker Container'){
+        stage('Deploy To Kubernetes Container'){
             steps{
                 script{
-                    sh 'sudo docker run -dit --name maven-project -p 80:8080 jarvis99/devops-integration' 
+                    sh 'kubectl apply -f deploymentservice.yaml' 
                 }
             }
         }
