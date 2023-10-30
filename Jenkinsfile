@@ -18,7 +18,7 @@ pipeline{
         stage('Build Docker Image'){
             steps{
                 script{
-                    sh 'sudo docker build -t jarvis99/devops-integration .'
+                    sh 'docker build -t jarvis99/devops-integration .'
                    }  
               }
         }
@@ -26,9 +26,9 @@ pipeline{
             steps{
                 script{
                     withCredentials([string(credentialsId: 'docker-passwords', variable: 'docker_password')]) {
-                       sh ' sudo  docker login -u jarvis99 -p $docker_password'
+                       sh ' docker login -u jarvis99 -p $docker_password'
                     }
-                       sh ' sudo docker push jarvis99/devops-integration'
+                       sh ' docker push jarvis99/devops-integration'
                    }  
               }
         }
