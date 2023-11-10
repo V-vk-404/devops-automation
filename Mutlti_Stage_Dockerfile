@@ -1,0 +1,10 @@
+# Stage 1: Build stage
+FROM openjdk:8 AS builder
+WORKDIR /app
+COPY target/devops-integration.jar /app/devops-integration.jar
+
+# Stage 2: Final image
+FROM openjdk:8
+EXPOSE 8080
+COPY --from=builder /app/devops-integration.jar /app/devops-integration.jar
+ENTRYPOINT ["java","-jar","/app/devops-integration.jar"]
